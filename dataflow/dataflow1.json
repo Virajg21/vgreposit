@@ -1,0 +1,46 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "vgcsvinputemp",
+						"type": "DatasetReference"
+					},
+					"name": "Allemp"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "vgcsvoutput",
+						"type": "DatasetReference"
+					},
+					"name": "HREmpsink"
+				},
+				{
+					"dataset": {
+						"referenceName": "vgcsvoutput",
+						"type": "DatasetReference"
+					},
+					"name": "ITempsink"
+				},
+				{
+					"dataset": {
+						"referenceName": "vgcsvoutput",
+						"type": "DatasetReference"
+					},
+					"name": "payrollemp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split"
+				}
+			],
+			"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Allemp\nAllemp split(equals(Column_4, '1'),\n\tequals(Column_4, '2'),\n\tequals(Column_4, '3'),\n\tdisjoint: false) ~> split@(itemp, hremp, payrollemp)\nsplit@hremp sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['Hremp.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> HREmpsink\nsplit@itemp sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['ITemp.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> ITempsink\nsplit@payrollemp sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['payrollemp.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> payrollemp"
+		}
+	}
+}

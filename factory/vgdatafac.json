@@ -1,0 +1,9 @@
+{
+	"name": "vgdatafac",
+	"location": "australiaeast",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "948f3652-3083-4888-8b1e-e151d9461320",
+		"tenantId": "349fca6c-4bba-405f-88eb-899070b406f7"
+	}
+}
